@@ -14,6 +14,7 @@ import { GoodText1 } from './GoodText';
 const Features = ({ forceDarkMode = true }) => {
   const [activeFeature, setActiveFeature] = useState('idea-to-repo');
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [iframeLoading, setIframeLoading] = useState(true);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const videoRef = useRef(null);
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -41,7 +42,7 @@ const Features = ({ forceDarkMode = true }) => {
       title: "Your Random Idea to GitHub Repo",
       description: "Transform your creative ideas into structured GitHub repositories with AI-powered project scaffolding",
       icon: <FaRocket />,
-      videoSrc: "https://res.cloudinary.com/duy8dp4tq/video/upload/v1754477364/qvsrnneoe154uunnsy1i.mp4",
+      vimeoId: "1120052922",
       posterSrc: "https://www.solidbackgrounds.com/images/1280x720/1280x720-black-solid-color-background.jpg"
     },
     {
@@ -49,7 +50,7 @@ const Features = ({ forceDarkMode = true }) => {
       title: "Analyze GitHub Repository",
       description: "Deep dive into repository structure, analyze code quality, dependencies, and get comprehensive insights",
       icon: <FaCode />,
-      videoSrc: "https://res.cloudinary.com/duy8dp4tq/video/upload/v1754496816/fczk6cbu8q4ji9aeleig.mp4",
+      vimeoId: "1120052838",
       posterSrc: "https://www.solidbackgrounds.com/images/1280x720/1280x720-black-solid-color-background.jpg"
     },
     {
@@ -57,8 +58,7 @@ const Features = ({ forceDarkMode = true }) => {
       title: "Generate a Great README",
       description: "Paste a repo URL, analyze the codebase, and draft a polished README with live edit and preview.",
       icon: <FaFileAlt />,
-
-      videoSrc: "https://res.cloudinary.com/duy8dp4tq/video/upload/v1754788911/tcrrmufmrctktm16cfhu.mp4",
+      vimeoId: "1120052922",
       posterSrc: "https://www.solidbackgrounds.com/images/1280x720/1280x720-black-solid-color-background.jpg"
     },
     {
@@ -66,7 +66,7 @@ const Features = ({ forceDarkMode = true }) => {
       title: "Visualize GitHub Repository",
       description: "Generate interactive flow diagrams and visual representations of repository architecture",
       icon: <FaEye />,
-      videoSrc: "https://res.cloudinary.com/duy8dp4tq/video/upload/v1754494779/gm338fv7egm7afk6ap0t.mp4",
+      vimeoId: "1120052965",
       posterSrc: "https://www.solidbackgrounds.com/images/1280x720/1280x720-black-solid-color-background.jpg"
     },
     {
@@ -74,7 +74,7 @@ const Features = ({ forceDarkMode = true }) => {
       title: "Find Best Open Source Repos to Contribute",
       description: "Discover good first issues, bounty issues, and major contributions across different programming languages",
       icon: <FaSearch />,
-      videoSrc: "https://res.cloudinary.com/duy8dp4tq/video/upload/v1754499776/hgxphhdygc4rdfkptsrx.mp4",
+      vimeoId: "1120052950",
       posterSrc: "https://www.solidbackgrounds.com/images/1280x720/1280x720-black-solid-color-background.jpg"
     },
     {
@@ -82,7 +82,7 @@ const Features = ({ forceDarkMode = true }) => {
       title: "Compare GitHub Devs and See Who Wins",
       description: "Compare GitHub profiles, analyze contribution patterns, and visualize developer statistics side by side",
       icon: <FaUsers />,
-      videoSrc: "https://res.cloudinary.com/duy8dp4tq/video/upload/v1754790105/hb98grhvl3ctchpqdhsm.mp4",
+      vimeoId: "1120052867",
       posterSrc: "https://www.solidbackgrounds.com/images/1280x720/1280x720-black-solid-color-background.jpg"
     }
   ];
@@ -90,6 +90,12 @@ const Features = ({ forceDarkMode = true }) => {
   const handleFeatureClick = (id: string) => {
     setActiveFeature(id);
     setVideoLoaded(false);
+    setIframeLoading(true);
+  };
+
+  const handleIframeLoad = () => {
+    setVideoLoaded(true);
+    setIframeLoading(false);
   };
 
   const activeFeatureData = premiumFeatures.find(f => f.id === activeFeature);
@@ -149,20 +155,27 @@ const Features = ({ forceDarkMode = true }) => {
                       />
                       <div className="relative overflow-hidden rounded-xl bg-black/40 backdrop-blur-sm border border-white/5">
                         <div className="relative aspect-video w-full">
-                          {feature.videoSrc ? (
-                            <video 
-                              key={feature.videoSrc}
-                              className="w-full h-full object-cover"
-                              poster={feature.posterSrc}
-                              autoPlay
-                              muted
-                              loop
-                              playsInline
-                              preload="auto"
-                            >
-                              <source src={feature.videoSrc} type="video/mp4" />
-                              Your browser does not support the video tag.
-                            </video>
+                          {feature.vimeoId ? (
+                            <>
+                              <iframe 
+                                key={feature.vimeoId}
+                                src={`https://player.vimeo.com/video/${feature.vimeoId}?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=1&loop=1&background=1`}
+                                className="w-full h-full"
+                                frameBorder="0"
+                                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                                referrerPolicy="strict-origin-when-cross-origin"
+                                title={feature.title}
+                                onLoad={handleIframeLoad}
+                              />
+                              {iframeLoading && activeFeature === feature.id && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                                  <div className="flex flex-col items-center gap-3">
+                                    <div className="w-8 h-8 border-2 border-white/20 border-t-white/80 rounded-full animate-spin"></div>
+                                    <span className="text-white/70 text-sm">Loading video...</span>
+                                  </div>
+                                </div>
+                              )}
+                            </>
                           ) : null}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                         </div>
@@ -261,22 +274,33 @@ const Features = ({ forceDarkMode = true }) => {
               />
               <div className="relative overflow-hidden rounded-xl bg-black/40 backdrop-blur-sm border border-white/5 dark:shadow-[0px_0px_27px_0px_#2D2D2D]">
               <div className="relative aspect-video w-full">
-                {activeFeatureData?.videoSrc ? (
-                  <video 
-                    key={activeFeatureData?.videoSrc}
-                    ref={videoRef}
-                    className="w-full h-full object-cover"
-                    poster={activeFeatureData?.posterSrc}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="auto"
-                    onLoadedData={() => setVideoLoaded(true)}
-                  >
-                    <source src={activeFeatureData?.videoSrc} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
+                {activeFeatureData?.vimeoId ? (
+                  <>
+                    <iframe 
+                      key={activeFeatureData?.vimeoId}
+                      src={`https://player.vimeo.com/video/${activeFeatureData.vimeoId}?badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1&muted=1&loop=1&background=1`}
+                      className="w-full h-full"
+                      frameBorder="0"
+                      allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      title={activeFeatureData.title}
+                      onLoad={handleIframeLoad}
+                    />
+                    {iframeLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm border border-white/10 rounded-xl">
+                        <div className="flex flex-col items-center gap-4">
+                          <div className="relative">
+                            <div className="w-12 h-12 border-2 border-white/20 border-t-blue-400/80 rounded-full animate-spin"></div>
+                            <div className="absolute inset-0 w-12 h-12 border-2 border-transparent border-r-cyan-400/60 rounded-full animate-spin" style={{animationDirection: 'reverse', animationDuration: '1.5s'}}></div>
+                          </div>
+                          <div className="text-center">
+                            <span className="text-white/90 text-base font-medium">Loading {activeFeatureData.title}</span>
+                            <div className="text-white/60 text-sm mt-1">Please wait...</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-[url('https://www.solidbackgrounds.com/images/1280x720/1280x720-black-solid-color-background.jpg')] bg-cover">
                     <div className="flex items-center gap-3 text-white/80">
