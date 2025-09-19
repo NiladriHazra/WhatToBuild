@@ -735,6 +735,7 @@ function AnalyzePageContent() {
                   </div>
 
                   {/* Categorization Rules */}
+                  {/* Workflow analysis */}
                   <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-lg p-4">
                     <h3 className="text-lg font-medium text-white mb-4">File Categorization Rules</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
